@@ -40,6 +40,7 @@ void getGears(char array[DIM][DIM], int maxx, int maxy, int x, int y, int gears[
             {
                 if (array[y1][x1] == '*')
                 {
+                    // map 2d co-ordinates to 1d as follows:
                     int gear = y1 * DIM + x1;
                     addarray(gears, gear);
                 }
@@ -47,6 +48,12 @@ void getGears(char array[DIM][DIM], int maxx, int maxy, int x, int y, int gears[
         }
     }
 }
+
+struct Pos
+{
+    int x;
+    int y;
+};
 
 struct Pos read2darray(char *filename, char array[DIM][DIM])
 {
@@ -73,7 +80,6 @@ int main()
     int gears[MAX_ARRAY_SIZE];
     int numgears[MAX_ARRAY_SIZE];
     int prodgears[MAX_ARRAY_SIZE];
-    //memset(numgears, 0, MAX_ARRAY_SIZE);
 
     cleararray(gears);
 
@@ -89,6 +95,8 @@ int main()
             if (array[y][x] >= '0' && array[y][x] <= '9')
             {
                 n = 10 * n + (array[y][x] - '0');
+                // count the number of gears around this digit.
+                // the found gears are returned in the "gears" array.
                 getGears(array, max.x, max.y, x, y, gears);
             }
             else if (n > 0)
