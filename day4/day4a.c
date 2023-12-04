@@ -7,9 +7,7 @@ void addarray(int *a, int b)
 {
     for (int i = 0; i < DIM; ++i)
     {
-        if (a[i] == b)
-            printf("DOUBLE?????\n");
-        if (a[i] == -1)
+        if (a[i] == b || a[i] == -1)
         {
             a[i] = b;
             break;
@@ -28,7 +26,6 @@ int main()
 
     FILE *file = fopen("data.txt", "r");
     char line[2560];
-    int sum = 0;
 
     int extracards[DIM];
     memset(extracards, 0, DIM);
@@ -44,7 +41,7 @@ int main()
         int card = 0;
         memset(mycards, -1, DIM);
         memset(othercards, -1, DIM);
-        for (int i = 0; i < strlen(line); ++i)
+        for (int i = 0; line[i] != '\0'; ++i)
         {
             if (line[i] == ':')
             {
@@ -69,35 +66,22 @@ int main()
                     addarray(mycards, n);
                 else if (state == READING_OTHER_CARD)
                     addarray(othercards, n);
-
                 // reset...
                 n = 0;
-            }
-            if (line[i] == '\0')
-            {
-                break;
             }
         }
 
         for (int x = 0; x < extracards[card - 1] + 1; ++x)
         {
             int score = 0;
-            for (int i = 0; i < DIM; ++i)
+            for (int i = 0; mycards[i] != -1; ++i)
             {
-                for (int j = 0; j < DIM; ++j)
+                for (int j = 0; othercards[j] != -1; ++j)
                 {
-                    if (othercards[j] == -1)
-                    {
-                        break;
-                    }
-                    else if (othercards[j] == mycards[i])
+                    if (othercards[j] == mycards[i])
                     {
                         score++;
                     }
-                }
-                if (mycards[i] == -1)
-                {
-                    break;
                 }
             }
 
@@ -108,6 +92,5 @@ int main()
             }
         }
     }
-
     printf("Sum: %d\n", totcards);
 }
