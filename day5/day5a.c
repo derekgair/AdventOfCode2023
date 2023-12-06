@@ -4,16 +4,19 @@
 #include <limits.h>
 
 #define DIM (10000)
-void addarray(long *a, long b)
+#define DIM2 (100000)
+
+int addarray(long *a, long b)
 {
     for (long i = 0; i < DIM; ++i)
     {
         if (a[i] == -1)
         {
             a[i] = b;
-            break;
+            return i;
         }
     }
+    return -1;
 }
 
 struct Range
@@ -37,8 +40,6 @@ void addarrayrange(struct Range *a, struct Range b)
 int main()
 {
 
-    FILE *file = fopen("data.txt", "r");
-    char line[2560];
     long sum = 0;
 
     long seeds[DIM];
@@ -79,6 +80,9 @@ int main()
     };
 
     enum Mode mode = SEEDS;
+    FILE *file = fopen("data.txt", "r");
+    char line[2560];
+    
     while (fgets(line, sizeof(line), file))
     {
         long n = -1;
@@ -161,6 +165,12 @@ int main()
             }
         }
     }
+    
+    long cache[DIM2];
+    long cache2[DIM2];
+    memset(cache,-1,DIM2);
+    memset(cache2,-1,DIM2);
+    
 
     long lowest = LONG_MAX; // BIG NUMBER
     for (long i = 0; seeds[i] != -1; i += 2)
@@ -188,6 +198,7 @@ int main()
 
             if (n < lowest)
                 lowest = n;
+            
         }
     }
     printf("\nLowest:%ld\n", lowest);

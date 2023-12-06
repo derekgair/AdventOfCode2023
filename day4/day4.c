@@ -7,8 +7,6 @@ void addarray(int *a, int b)
 {
     for (int i = 0; i < DIM; ++i)
     {
-        if (a[i] == b)
-            printf("DUPLICATE ENTRY?????\n");
         if (a[i] == -1)
         {
             a[i] = b;
@@ -96,7 +94,6 @@ int main()
                 break;
             }
         }
-
         sum += score;
     }
     printf("Sum: %d\n", sum);

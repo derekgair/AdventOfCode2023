@@ -92,5 +92,6 @@ int main()
             }
         }
     }
+    fclose(file);
     printf("Sum: %d\n", totcards);
 }
