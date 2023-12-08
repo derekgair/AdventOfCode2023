@@ -14,8 +14,8 @@ enum Mode
     READ_RIGHT = 3,
 };
 
-// Utility function to find
-// GCD of 'a' and 'b'
+// lcm, partly stolen from stackoverflow....
+// modified for long long
 long long gcd(long long a, long long b)
 {
     if (b == 0)
@@ -23,14 +23,10 @@ long long gcd(long long a, long long b)
     return gcd(b, a % b);
 }
 
-// Returns LCM of array elements
 long long findlcm(int arr[], int n)
 {
-    // Initialize result
     long long ans = arr[0];
 
-    // ans contains LCM of arr[0], ..arr[i]
-    // after i'th iteration,
     for (int i = 1; i < n; i++) {
         long long a = arr[i];
 
