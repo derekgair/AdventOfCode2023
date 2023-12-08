@@ -1,270 +1,238 @@
-#include <stdio.h>
-#include <stddef.h>
-#include <string.h>
-#include <limits.h>
+    #include <stdio.h>
+    #include <stddef.h>
+    #include <string.h>
+    #include <limits.h>
 
-#define DIM (5)
-#define DIM2 (1000)
+    #define MAX_BID (10000)
+    #define DIM (MAX_BID)
 
-struct Node {
-    int hand[5];
-    int uhand[5];
-    int rank; 
-    int bid;   
-    char* desc;
-};
-
-struct Node nodes[DIM2];
-
-
-int sequence( int* hand,int len ) {
-    for ( int i = 0; i< len-1; ++i )
-        if( hand[i] != hand[i+1]) {
-            return 0;
-        }
-    return hand[0];
-
-}
-int addrank(struct Node *rank, int *hand, int *uhand, int calcRank, int bid,char* desc) {
-    for ( int i = 0; ; ++i) {
-        if ( rank[i].rank==-1 )
-        {
-            rank[i].rank=calcRank;
-            rank[i].bid = bid;
-            rank[i].desc = desc;
-            
-            for ( int k = 0;k < 5;++k)
-                    rank[i].hand[k] = hand[k];
-            for ( int k = 0;k < 5;++k)
-                    rank[i].uhand[k] = uhand[k];
-            return i;
-        }    
-        else if ( calcRank<rank[i].rank){
-            for ( int j = DIM2 - 1; j > i; --j)
-            {     
-                rank[j].rank = rank[j-1].rank;
-                rank[j].bid = rank[j-1].bid;
-                rank[j].desc = rank[j-1].desc;
-                for ( int k = 0;k < 5;++k)
-                    rank[j].hand[k] = rank[j-1].hand[k];
-                for ( int k = 0;k < 5;++k)
-                    rank[j].uhand[k] = rank[j-1].uhand[k];
+    int insertarray(long* a, int rank, int bid) {
+        int i = 0;
+        for ( ; a[i]!=0; ++i ){
+            if ( a[i] == -1 ) {
+                long v = (long)rank*(long)MAX_BID + bid;
+                a[i] = v;
+                break;
             }
-            rank[i].rank=calcRank;
-            rank[i].bid=bid;
-            rank[i].desc=desc;
-            for ( int k = 0;k < 5;++k)
-                rank[i].hand[k] = hand[k];
-            for ( int k = 0;k < 5;++k)
-                rank[i].uhand[k] = uhand[k];
-            return i;
-        }
-    }
-    return 0;
-}
-
-int addhand(int a[5], int u[5], int b)
-{
-    for (int i = 0; i < DIM; ++i)
-    {
-        if ( u[i] == -1 ){
-            u[i] = b;
-            break;
-        }
-    }
-    for (int i = 0; i < DIM; ++i)
-    {
-        if (a[i] == -1)
-        {
-            a[i] = b;
-            return i;
-        }
-        else if (b>a[i]) {
-            for ( int j = DIM-1; j > i; --j ) {
-                a[j] = a[j-1];
+            else if ( rank < a[i]/(long)MAX_BID ) {
+                for ( int j = DIM-1; j>i; --j) {
+                    a[j] = a[j-1];
+                }
+                a[i] = (long)rank*(long)MAX_BID + bid;
+                break;
             }
-            a[i] = b;
-            return i;
         }
-      
+        return i;
     }
-    return -1;
-}
-int fiveOfAKind( int* hand ) {
-    return sequence(hand,5);
-}
-int fourOfAKind( int* hand ) {
-    int i1 = sequence(hand,4);
-    if ( i1>0) return hand[0]*15 + hand[4];
-    i1 = sequence(hand+1,4);
-    if ( i1>0) return hand[1]*15 + hand[0];
-    return 0;
-
-}
-int fullHouse( int * hand) {
-    int i1 = sequence(hand,3);
-    int i2 = sequence(hand+3,2);
-    int i3 = sequence(hand,2);
-    int i4 = sequence(hand+2,3);
-    if ( i1>0 && i2>0) return hand[0]*15 + hand[3];
-    if ( i3>0 && i4>0) return hand[3]*15 + hand[0];
-    return 0;
-}
-int threeKind( int * hand) {
-    int i1 = sequence(hand,3);
-    if (i1) return hand[0]*15*15 + hand[3]*15+hand[4];
-    int i2 = sequence(hand+1,3);
-    if ( i2) return hand[1]*15*15 + hand[0]*15 + hand[4];
-    int i3 = sequence(hand+2,3);
-    if (i3) return hand[2]*15*15 + hand[0]*15 + hand[1] ;
-    return 0;
-}
-int twoPair( int * hand) {
-    int i = sequence(hand,2);
-    int i1 = sequence(hand+1,2);
-    int i2 = sequence(hand+2,2);
-    int i3 = sequence(hand+3,2);
-    if ( i > 0 && i2 > 0) {
-        return hand[0]*15*15 + hand[2]*15 + hand[4];
+    int addarray(int* a, int b) {
+        int i = 0; 
+        for ( ; a[i]!=-1; ++i );
+        a[i] = b;
+        return i;
     }
-    if ( i > 0 && i3 > 0) {
-        return hand[0]*15*15 + hand[3]*15 + hand[2];
+    int addhand(char* a, char b) {
+        int i = 0; 
+        for ( ; a[i]!=-1; ++i );
+        a[i] = b;
+        return i;
     }
-    if ( i1 > 0 && i3 > 0) {
-        return hand[1]*15*15 + hand[3]*15 + hand[0];
+    int add_sorted_hand(char* a, char b) {
+        int i= 0;
+        for ( ; i< 5; ++i ){
+            if ( a[i] == -1 ) {
+                a[i] = b;
+                break;
+            }
+            else if ( b > a[i] ) {
+                for ( int j = 4;j>i;--j) {
+                    a[j]=a[j-1];
+                }
+                a[i] = b;
+                break;
+            }
+        }
+        return i;
     }
-    return 0;
-}
-int onePair( int * hand) {
-    int i = sequence(hand,2);
-    if (i) return hand[0]*15*15*15 + hand[2]*15*15 + hand[3]*15 + hand[4];
-    i = sequence(hand+1,2);
-    if ( i) return hand[1]*15*15*15+ hand[0]*15*15 + hand[3]*15 + hand[4];
-    i = sequence(hand+2,2);
-    if (i) return hand[2]*15*15*15+ hand[0]*15*15 + hand[1]*15 + hand[4];
-    i = sequence(hand+3,2);
-    if (i) return hand[3]*15*15*15+ hand[0]*15*15 + hand[1]*15 + hand[2];
-    return 0;
-}
-int high( int * hand) {
-    return hand[0]*15*15*15*15 + hand[1]*15*15*15 + hand[2]*15*15 + hand[3]*15 + hand[4];
-}
-
-int rank ( int* hand) {
-    const int M = 15*15*15*15*15*15;
-    int i = fiveOfAKind(hand);
-    if ( i ) return M*10 + i;
-    i = fourOfAKind(hand);
-    if ( i ) return M*9 + i;
-    i = fullHouse(hand);
-    if ( i ) return M*8 + i;
-    i = threeKind(hand);
-    if ( i ) return M*7 + i;
-    i = twoPair(hand);
-    if ( i ) return M*6 + i;
-    i = onePair(hand);
-    if ( i ) return M*5 + i;
-    i = high(hand);
-    if ( i ) return M*4 + i;
-    return 0;
-}
-
-int dumber_rank( int* hand ){
-    int r= 0;
-    for ( int i = 0; i < 5; ++i )
-        r+=15*r + hand[i];
-    return r;
-}
-int dumb_rank ( int* hand, int* uhand) {
-    const int M = 15*15*15*15*15*15;
-    int i = fiveOfAKind(hand);
-    if ( i ) return M*10 + dumber_rank(uhand);
-    i = fourOfAKind(hand);
-    if ( i ) return M*9 + dumber_rank(uhand);
-    i = fullHouse(hand);
-    if ( i ) return M*8 + dumber_rank(uhand);
-    i = threeKind(hand);
-    if ( i ) return M*7 + dumber_rank(uhand);
-    i = twoPair(hand);
-    if ( i ) return M*6 + dumber_rank(uhand);
-    i = onePair(hand);
-    if ( i ) return M*5 + dumber_rank(uhand);
-    i = high(hand);
-    if ( i ) return M*4 + dumber_rank(uhand);
-    return 0;
-}
-
-int main()
-{
-    FILE *file = fopen("data.txt", "r");
-    char line[2560];
-
-
-
-struct Node nodes[DIM2];
-memset(nodes,-1,DIM2*sizeof(struct Node));
-    //int hand[DIM];
-    int hands[1000][DIM];
-    memset( hands,-1,1000*DIM*sizeof(int));
-    enum Mode
-    {
-        READ_HAND = 0,
-        READ_BID = 1
+    enum Type {
+        FIVE_KIND = 6,
+        FOUR_KIND = 5,
+        FULL_HOUSE = 4,
+        THREE_KIND = 3,
+        TWO_PAIR = 2,
+        ONE_PAIR = 1,
+        HIGH = 0,
     };
 
-    enum Mode mode = READ_HAND;
-
-    int i = 0;
-    while (fgets(line, sizeof(line), file))
-    {
-        mode = READ_HAND;
-        int hand[5] = {-1,-1,-1,-1,-1};
-        int uhand[5] = {-1,-1,-1,-1,-1};
-        int bid = 0;
-        int n = -1;;
-        //int* hand = hands[i];
-        for ( char* pos = line ; (*pos)!='\0'; ++pos) {
-            if ( *pos == ' ')
-               mode = READ_BID;
-            else if ( mode ==READ_HAND ) {
-                if ( *pos <= '9' && *pos > '0' ) {
-                    addhand(hand,uhand,*pos-'0');
-                   }
-                else if ( *pos == 'T' ) addhand(hand,uhand, 10);
-                else if ( *pos == 'J' ) addhand(hand,uhand, 11);
-                else if ( *pos == 'Q' ) addhand(hand,uhand, 12);
-                else if ( *pos == 'K' ) addhand(hand,uhand, 13);
-                else if ( *pos == 'A' ) addhand(hand,uhand, 14);                
+    enum Type recognize(char* sorted_hand) {
+        char temp[6];
+        temp[5]='\0';
+        char v = 'A';
+        temp[0] = v;
+        for ( int i = 1;i< 5;++i) {
+            if ( sorted_hand[i] != sorted_hand[i-1]) {
+                v++;
             }
-            else if ( mode== READ_BID ) {
-                if ( *pos <= '9' && *pos >= '0' ) {
-                    n=(n==-1?0:n)*10 + (*pos-'0');
+            if ( sorted_hand[i] == '1')
+                v='1';
+            temp[i] = v;
+        }
+        if ( strcmp(temp,"ABCDE") ==0) {
+            return HIGH;
+        }
+        else if ( 
+            strcmp(temp,"ABCDD") ==0 || 
+            strcmp(temp,"ABCCD") ==0 || 
+            strcmp(temp,"ABBCD") ==0 || 
+            strcmp(temp,"AABCD") ==0 || 
+            strcmp(temp,"ABCD1") ==0 || 
+            1==0) {
+            return ONE_PAIR;
+        }
+        else if ( 
+            strcmp(temp,"AABBC") ==0 || 
+            strcmp(temp,"ABBCC") ==0 || 
+            strcmp(temp,"AABCC") ==0 || 
+            1==0) {
+            return TWO_PAIR;
+        }
+        else if ( 
+            strcmp(temp,"AAABC") ==0 ||
+            strcmp(temp,"ABBBC") ==0 ||
+            strcmp(temp,"ABCCC") ==0 ||
+            strcmp(temp,"AABC1") ==0 ||
+            strcmp(temp,"ABBC1") ==0 ||
+            strcmp(temp,"ABCC1") ==0 ||
+            strcmp(temp,"ABC11") ==0 ||
+            1==0) {
+            return THREE_KIND;
+        }
+        else if ( 
+            strcmp(temp,"AAABB") ==0 ||
+            strcmp(temp,"AABBB") ==0 ||
+            strcmp(temp,"AABB1") ==0 ||
+            1==0) {
+            return FULL_HOUSE;
+        }
+        else if ( 
+            strcmp(temp,"AAAAB") ==0 ||
+            strcmp(temp,"ABBBB") ==0 ||
+            strcmp(temp,"AAAB1") ==0 ||
+            strcmp(temp,"ABBB1") ==0 ||
+            strcmp(temp,"AAB11") ==0 ||
+            strcmp(temp,"ABB11") ==0 ||
+            strcmp(temp,"AB111") ==0 ||
+            1==0) {
+            return FOUR_KIND;
+        }
+        else if ( 
+            strcmp(temp,"AAAAA") ==0 ||
+            strcmp(temp,"AAAA1") ==0 ||
+            strcmp(temp,"AAA11") ==0 ||
+            strcmp(temp,"AA111") ==0 ||
+            strcmp(temp,"A1111") ==0 ||
+            strcmp(temp,"11111") ==0 ||
+            1==0) {
+            return FIVE_KIND;
+        } 
+        //else if ( strcmp(temp,"ABCDE") ==0) {
+            return HIGH;
+        //}
+    }
+
+    int card_rank( char a ) {
+        if ( a >= '0' && a<='9' ) {
+            return a-'0';
+        }
+        return a-'A'+10;
+    }
+    int simple_rank( char* hand ){
+        int rank = 0;
+        for ( int i = 0; i < 5; ++i ) {
+            rank = rank * 15 + card_rank(hand[i]);
+        }
+        return rank;
+    }
+    int rank( char* hand, char* shand ) {
+        int M = (15*15*15*15*15);
+
+        int s = simple_rank(hand);
+        int type = recognize(shand);
+        return M*type + s;
+    }
+
+    int main()
+    {
+        FILE *file = fopen("data.txt", "r");
+        char line[2560];
+        long nodes[DIM];
+        char hands[DIM][6];
+
+        for ( int i = 0 ; i < DIM; ++i ) {
+            nodes[i] = -1L;
+        }
+        enum Mode
+        {
+            READ_HAND = 0,
+            READ_BID = 1
+        };
+
+        enum Mode mode = READ_HAND;
+
+        int i = 0;
+        while (fgets(line, sizeof(line), file))
+        {
+            mode = READ_HAND;
+            char hand[6] = {-1,-1,-1,-1,-1,0};
+            char shand[6] = {-1,-1,-1,-1,-1,0};
+            
+            int n = -1;;
+            
+            for ( char* pos = line ; (*pos)!='\0'; ++pos) {
+                if ( *pos == ' ')
+                mode = READ_BID;
+                else if ( mode == READ_HAND ) {
+                    if ( *pos <= '9' && *pos >= '0' ) {
+                        addhand(hand,*pos);
+                        add_sorted_hand(shand,*pos);
+                    }
+                    else if ( *pos == 'T' ) {
+                        addhand(hand, 'A');
+                        add_sorted_hand(shand,'A');
+                    }
+                    else if ( *pos == 'J' ) 
+                    {
+                        addhand(hand, '1');
+                        add_sorted_hand(shand,'1');
+                    }
+                    else if ( *pos == 'Q' ) {
+                        addhand(hand, 'C');
+                        add_sorted_hand(shand,'C');
+                    }
+                    else if ( *pos == 'K' ) {
+                        addhand(hand, 'D');
+                        add_sorted_hand(shand,'D');
+                    }
+                    else if ( *pos == 'A' ) {
+                        addhand(hand, 'E');
+                        add_sorted_hand(shand,'E');
+                    }                
+                }
+                else if ( mode== READ_BID ) {
+                    if ( *pos <= '9' && *pos >= '0' ) {
+                        n=(n==-1?0:n)*10 + (*pos-'0');
+                    }
                 }
             }
+            insertarray(nodes,rank(hand,shand),n);
+            strcpy(hands[n],hand);
+            printf("%s:%s:%d:%d:%d\n",hand,shand,n,recognize(shand),rank(hand,shand));
         }
 
-        //int calcRank = rank(hand);
-        int calcRank = dumb_rank(hand,uhand);
-        addrank(nodes,hand,uhand,calcRank,n,"");
+        long res = 0;
+        for ( int i = 0; i < DIM; ++i ) {
+            if ( nodes[i] == -1) break;
+            res = res + nodes[i]%MAX_BID * (i+1);
+            printf( "+%ld*%d  [%s]\n",nodes[i]%MAX_BID,(i+1),hands[nodes[i]%MAX_BID]);
+        }
+        printf("=%ld\n",res);
     }
-    int res = 0;
-    for ( int i = 0; i < DIM2;  i++ ) {
-        if ( nodes[i].rank==-1) break;
-        res = res + nodes[i].bid*(i+1);
-        printf("%d*%d+",nodes[i].bid,(i+1));
-    }
-    printf("=%d\n",res);
-
-    for ( int i = 0; i < DIM2;  i++ ) {
-        if ( nodes[i].rank==-1) break;
-        for ( int j = 0; j < 5; ++j)
-            printf("%d-",nodes[i].uhand[j]);
-        printf(" (%d)", nodes[i].rank);
-    }
-    printf("\n");
-    
-    printf("%d\n",INT_MAX);
-    printf("%d\n",15*15*15*15*15*15*10);
-
-    return 0;
-}
