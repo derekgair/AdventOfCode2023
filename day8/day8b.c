@@ -27,7 +27,8 @@ long long findlcm(int arr[], int n)
 {
     long long ans = arr[0];
 
-    for (int i = 1; i < n; i++) {
+    for (int i = 1; i < n; i++)
+    {
         long long a = arr[i];
 
         ans = (((a * ans)) /
@@ -41,13 +42,13 @@ int main()
     char directions[STRLEN];
 
     int results[10000];
-    for ( int i= 0; i < 10000; ++i)
-     results[i] = -1;
+    for (int i = 0; i < 10000; ++i)
+        results[i] = -1;
 
     int nodes[DIM];
-    for ( int i= 0; i < DIM; ++i) 
+    for (int i = 0; i < DIM; ++i)
         nodes[i] = -1;
-    
+
     int ZZZ = ('Z' - 'A') * 26 * 26 + ('Z' - 'A') * 26 + 'Z' - 'A';
     int XXX = ('X' - 'A') * 26 * 26 + ('X' - 'A') * 26 + 'X' - 'A';
     int AAA = 0;
@@ -108,7 +109,7 @@ int main()
         if (nodes[i] != -1) // skip empty...
         {
             int node = i;
-            printf("%c%c%c:",node/(26*26) + 'A',(node/26)%26 + 'A',node%26 + 'A');
+            printf("%c%c%c:", node / (26 * 26) + 'A', (node / 26) % 26 + 'A', node % 26 + 'A');
 
             int len = 0;
             int found = 0;
@@ -130,7 +131,7 @@ int main()
                     {
                         // printf("\nResult=%d\n", len);
                         results[resultindex++] = len;
-                        printf("%d\n",len);
+                        printf("%d\n", len);
 
                         found = 1;
                         break;
