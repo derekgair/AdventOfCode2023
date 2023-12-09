@@ -4,7 +4,7 @@
 #include <limits.h>
 
 int STRLEN=1000;
-int DIM=1000;
+int DIM=100;
 
 int all_zero(int *a, int s ) {
 
@@ -14,7 +14,6 @@ int all_zero(int *a, int s ) {
         }
         return 1;
 }
-
 
 int main() {
 
@@ -51,7 +50,6 @@ int main() {
                 }
                             
         } 
-        //printf("Res:%d, %d",j,c);
         for ( int i = 0; i<c;++i )
         {
             sum+=array[i];
