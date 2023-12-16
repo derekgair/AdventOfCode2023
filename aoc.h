@@ -68,7 +68,7 @@ grid_t copygrid(grid_t grid) {
     grid_t ret;
     ret.maxx = grid.maxx;
     ret.maxy = grid.maxy;
-    ret.grid=malloc(grid.maxx*grid.maxy);
+    ret.grid= (char*)malloc(grid.maxx*grid.maxy);
     for ( int i = 0 ; i < grid.maxx*grid.maxy;++i) {
         *(ret.grid + i) = *(grid.grid+i);
     }
