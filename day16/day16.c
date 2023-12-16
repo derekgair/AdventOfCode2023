@@ -25,10 +25,7 @@ dirpos_t nextpos(dirpos_t pos, int dir)
 
 int recurse(grid_t grid, grid_t copy, dirpos_t pos, int depth)
 {
-    // printsep();
-    // printgrid(copy);
-    //     printf("%d,%d,%d : %d\n",pos.x,pos.y,pos.d,depth);
-
+    
     int ret = 0;
     if (pos.x >= grid.maxx)
         return 0;
@@ -138,7 +135,8 @@ int main()
     {
         for (int y = 0; y < grid.maxy; ++y)
         {
-            //dirty...
+            //I reallised later that we are only interested in the edges... so I just added
+            // the following line... I feel dirty...
             if (y == 0 || x == 0 || y == grid.maxy - 1 || x == grid.maxx - 1)
             {
                 for (int d = 0; d < 4; ++d)
@@ -148,7 +146,6 @@ int main()
                     start.y = y;
                     start.d = d;
                     cleargrid(copy, '.');
-                    // printgrid(copy);
                     int r = recurse(grid, copy, start, 0);
                     if (result < r)
                     {
@@ -161,5 +158,9 @@ int main()
             }
         }
     }
+    
+    freegrid(grid);
+    freegrid(copy);
+
     printf("Result=%d\n", result);
 }
